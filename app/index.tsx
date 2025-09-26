@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { View, Text } from "react-native";
+import { View, ActivityIndicator, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -10,15 +10,10 @@ export default function IndexPage() {
     const checkLogin = async () => {
       try {
         const token: string | null = await AsyncStorage.getItem("authToken");
-
-        if (!token) {
-          router.replace("/signin"); // ไปหน้า signin ถ้าไม่มี token
-        } else {
-          router.replace("/main"); // ไปหน้า main ถ้ามี token
-        }
+        router.replace(token ? "/main" : "/signin");
       } catch (error) {
         console.error("Error reading token:", error);
-        router.replace("/signin"); // fallback → ไปหน้า signin
+        router.replace("/signin");
       }
     };
 
@@ -26,8 +21,12 @@ export default function IndexPage() {
   }, [router]);
 
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Loading...</Text>
+    <View style={styles.container}>
+      <ActivityIndicator size="large" />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1, justifyContent: "center", alignItems: "center" },
+});
