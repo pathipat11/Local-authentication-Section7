@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { Link } from "expo-router";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { useTheme } from "./context/ThemeContext";
+import { useTheme } from "../context/ThemeContext";
 
 type AnimatedCardProps = {
     children: React.ReactNode;

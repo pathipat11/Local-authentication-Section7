@@ -2,7 +2,7 @@ import React from "react";
 import { Stack, usePathname } from "expo-router";
 import ThemeToggle from "./components/ThemeToggle";
 import AuthToggle from "./components/AuthToggle";
-import { ThemeProvider, useTheme } from "./context/ThemeContext";
+import { ThemeProvider, useTheme } from "../context/ThemeContext";
 
 const StackLayout: React.FC = () => {
   const { color } = useTheme();

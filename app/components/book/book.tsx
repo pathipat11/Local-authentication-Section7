@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, Image } from "react-native";
-import { useTheme } from "../../context/ThemeContext";
+import { useTheme } from "../../../context/ThemeContext";
 import { useRouter } from "expo-router";
 import Constants from "expo-constants";
 import BookNew from "./bookNew";

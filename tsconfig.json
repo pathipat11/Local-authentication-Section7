@@ -4,5 +4,5 @@
     "types": ["node"],
     "skipLibCheck": true
   },
-  "include": ["declarations.d.ts", "app", "context"]
+  "include": ["declarations.d.ts", "app", "context", "services", "types", "hooks"]
 }

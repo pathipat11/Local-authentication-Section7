@@ -1,6 +1,6 @@
 // app/about.tsx
 import { View, Text, StyleSheet, Image, ScrollView, TouchableWithoutFeedback, Animated } from "react-native";
-import { useTheme } from "./context/ThemeContext";
+import { useTheme } from "../context/ThemeContext";
 import { useRef, ReactNode } from "react";
 
 // Type สำหรับ AnimatedCard props

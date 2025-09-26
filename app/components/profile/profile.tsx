@@ -12,7 +12,7 @@ import {
   Alert,
 } from "react-native";
 import Constants from "expo-constants";
-import { useTheme } from "../../context/ThemeContext";
+import { useTheme } from "../../../context/ThemeContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface User {
@@ -122,7 +122,7 @@ const Profile = () => {
       <View style={styles.container}>
         <View style={[styles.card, { backgroundColor: color.surface }]}>
           <Image
-            source={require("../../assets/image/profile.jpg")}
+            source={require("../../../assets/image/profile.jpg")}
             style={styles.profile}
           />
           <Text style={[styles.name, { color: color.text }]}>{user.username}</Text>
