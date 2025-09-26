@@ -1,5 +1,6 @@
 {
   "expo": {
+    "scheme": "local-authentication",
     "name": "local-authentication",
     "slug": "local-authentication",
     "version": "1.0.0",

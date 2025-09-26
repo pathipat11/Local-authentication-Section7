@@ -1,73 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Button, StyleSheet, Alert } from 'react-native';
-import * as LocalAuthentication from 'expo-local-authentication';
+import React, { useState } from "react";
+import { View, Text, Button, StyleSheet } from "react-native";
+import { useBiometricAuth } from "./app/hooks/useBiometricAuth";
 
 export default function App() {
   const [isLogin, setIsLogin] = useState(false);
-  const [isBiometricSupported, setIsBiometricSupported] = useState(false);
-  const [isEnrolledAsync, setIsEnrolledAsync] = useState(false);
-  
-  useEffect(() => {
-    const checkBiometricSupport = async () => {
-      const hasHardware = await LocalAuthentication.hasHardwareAsync();
-      setIsBiometricSupported(hasHardware);
-      if (!hasHardware) {
-        Alert.alert(
-          "Error",
-          "Biometric authentication is not supported on this device."
-        );
-        return;
-      }
-      const enrolled = await LocalAuthentication.isEnrolledAsync();
-      setIsEnrolledAsync(enrolled);
-      if (!enrolled) {
-        Alert.alert(
-          "Error",
-          "No biometric records found. Please set up biometrics on your device."
-        );
-        return;
-      }
-    };
-    checkBiometricSupport();
-  }, []);
+  const { isBiometricSupported, isEnrolled, authenticate } = useBiometricAuth();
 
   const handleLogin = async () => {
-    const handleBiometricAuth = async () => {
-      try {
-        const result = await LocalAuthentication.authenticateAsync({
-          promptMessage: "Authenticate",
-          fallbackLabel: "Enter Passcode",
-          disableDeviceFallback: false,
-        });
-        if (result.success) {
-          setIsLogin(true);
-        } else {
-          Alert.alert("Authentication Failed", "Please try again.");
-        }
-      } catch (error) {
-        Alert.alert("Error", "An error occurred during authentication.");
-      }
-    };
-    console.log({ isBiometricSupported, isEnrolledAsync, isLogin })
-    if (isBiometricSupported && isEnrolledAsync && !isLogin)
-      await handleBiometricAuth();
+    if (isBiometricSupported && isEnrolled && !isLogin) {
+      const success = await authenticate();
+      if (success) setIsLogin(true);
+    }
   };
 
-  const handleLogout = () => {
-    setIsLogin(false)
-  };
-  
+  const handleLogout = () => setIsLogin(false);
+
   return (
     <View style={styles.container}>
       {isLogin ? (
         <>
-          <Text>Welcome, you are logged in to Application.</Text>
-          <Button title="Logout" onPress={handleLogout}></Button>
+          <Text>✅ Welcome, you are logged in to Application.</Text>
+          <Button title="Logout" onPress={handleLogout} />
         </>
       ) : (
         <>
-          <Text>Please login to Application.</Text>
-          <Button title="Login" onPress={handleLogin}></Button>
+          <Text>🔐 Please login to Application.</Text>
+          <Button title="Login" onPress={handleLogin} />
         </>
       )}
     </View>
@@ -77,8 +35,8 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
