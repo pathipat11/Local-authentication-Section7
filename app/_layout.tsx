@@ -26,12 +26,12 @@ const StackLayout: React.FC = () => {
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="main" options={{ title: "Home" }} />
       <Stack.Screen name="about" options={{ title: "About This Course" }} />
-      <Stack.Screen name="book" options={{ title: "Book Collection" }} />
-      <Stack.Screen name="book_new" options={{ title: "Book New" }} />
-      <Stack.Screen name="book_detail" options={{ title: "Book Detail" }} />
-      <Stack.Screen name="signup/index" options={{ title: "Sign Up" }} />
-      <Stack.Screen name="signin/index" options={{ title: "Sign In" }} />
-      <Stack.Screen name="profile/index" options={{ title: "Profile" }} />
+      <Stack.Screen name="components/book/book" options={{ title: "Book Collection" }} />
+      <Stack.Screen name="components/book/bookNew" options={{ title: "Book New" }} />
+      <Stack.Screen name="components/book/bookDetail" options={{ title: "Book Detail" }} />
+      <Stack.Screen name="signup/signin" options={{ title: "Sign Up" }} />
+      <Stack.Screen name="signin/signup" options={{ title: "Sign In" }} />
+      <Stack.Screen name="profile/profile" options={{ title: "Profile" }} />
     </Stack>
   );
 };
