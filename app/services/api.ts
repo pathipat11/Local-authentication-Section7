@@ -1,67 +1,65 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
 
-// ดึง API URL จาก environment variable
 const API_URL = Constants.expoConfig?.extra?.apiUrl || process.env.REACT_APP_NATIVE_API_URL;
 
-// helper function สำหรับ GET request
-export const get = async (endpoint: string, token?: string) => {
-  const res = await fetch(`${API_URL}${endpoint}`, {
-    headers: token
-      ? { Authorization: `Bearer ${token}` }
-      : undefined,
-  });
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData.message || "GET request failed");
-  }
-  return res.json();
+// ฟังก์ชันช่วยดึง token อัตโนมัติ
+const getToken = async () => {
+  return await AsyncStorage.getItem("authToken");
 };
 
-// helper function สำหรับ POST request
-export const post = async (endpoint: string, data: any, token?: string) => {
+// ฟังก์ชันตรวจสอบ response
+const handleResponse = async (res: Response) => {
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.message || "API request failed");
+  }
+  return data;
+};
+
+// GET request
+export const apiGet = async (endpoint: string) => {
+  const token = await getToken();
+  const res = await fetch(`${API_URL}${endpoint}`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+  });
+  return handleResponse(res);
+};
+
+// POST request
+export const apiPost = async (endpoint: string, body: any) => {
+  const token = await getToken();
   const res = await fetch(`${API_URL}${endpoint}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(body),
   });
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData.message || "POST request failed");
-  }
-  return res.json();
+  return handleResponse(res);
 };
 
-// helper function สำหรับ PUT request
-export const put = async (endpoint: string, data: any, token?: string) => {
+// PUT request
+export const apiPut = async (endpoint: string, body: any) => {
+  const token = await getToken();
   const res = await fetch(`${API_URL}${endpoint}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(body),
   });
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData.message || "PUT request failed");
-  }
-  return res.json();
+  return handleResponse(res);
 };
 
-// helper function สำหรับ DELETE request
-export const del = async (endpoint: string, token?: string) => {
+// DELETE request
+export const apiDelete = async (endpoint: string) => {
+  const token = await getToken();
   const res = await fetch(`${API_URL}${endpoint}`, {
     method: "DELETE",
-    headers: token
-      ? { Authorization: `Bearer ${token}` }
-      : undefined,
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
   });
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData.message || "DELETE request failed");
-  }
-  return res.json();
+  return handleResponse(res);
 };
