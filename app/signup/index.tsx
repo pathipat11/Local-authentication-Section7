@@ -5,54 +5,56 @@ import {
   StyleSheet,
   Alert,
   Text,
-  ActivityIndicator,
   TouchableOpacity,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Link, useRouter } from "expo-router";
-import { useTheme } from "../../../context/ThemeContext";
+import { useRouter } from "expo-router";
+import { useTheme } from "../../context/ThemeContext";
 import Constants from "expo-constants";
 
-const Signin = () => {
+const Signup = () => {
   const { color } = useTheme();
+  const [username, setUsername] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
-  const API_URL: string = Constants.expoConfig?.extra?.apiUrl || "";
 
   const router = useRouter();
+  const API_URL: string = Constants.expoConfig?.extra?.apiUrl || "";
 
-  const handleSignin = async () => {
-    if (!email || !password) {
-      Alert.alert("Validation Error", "Please fill in both fields.");
+  const handleSignup = async () => {
+    if (password.length < 6) {
+      Alert.alert("Error", "Password must be at least 6 characters long.");
       return;
     }
 
-    setLoading(true);
     try {
-      const response = await fetch(`${API_URL}/api/auth/login`, {
+      const response = await fetch(`${API_URL}/api/auth/register`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, email, password }),
       });
 
-      const result = await response.json();
-      setLoading(false);
+      let result: any;
+      try {
+        result = await response.json();
+      } catch {
+        result = { error: await response.text() };
+      }
 
       if (response.ok) {
-        await AsyncStorage.setItem("authToken", result.token);
-        await AsyncStorage.setItem("user", JSON.stringify(result.user));
-        console.log("Login successful");
-        Alert.alert("Success", "Login successful!");
-        router.replace("/main");
+        Alert.alert("Success", "Account created!", [
+          { text: "OK", onPress: () => router.push("/signin") },
+        ]);
       } else {
-        console.log("Login failed:", result.message);
-        Alert.alert("Login Error", result.message || "Invalid credentials.");
+        let errorMsg = "Signup failed";
+        if (result.errors && Array.isArray(result.errors)) {
+          errorMsg = result.errors.map((e: any) => e.msg).join("\n");
+        } else if (result.message || result.error) {
+          errorMsg = result.message || result.error;
+        }
+        console.log("Signup failed:", errorMsg);
+        Alert.alert("Error", errorMsg);
       }
     } catch (error) {
-      setLoading(false);
       console.error("Network Error:", error);
       Alert.alert("Network Error", "Unable to connect to the server.");
     }
@@ -61,15 +63,21 @@ const Signin = () => {
   return (
     <View style={[styles.screen, { backgroundColor: color.background }]}>
       <View style={[styles.container, { backgroundColor: color.surface }]}>
-        <Text style={[styles.header, { color: color.text }]}>
-          Welcome Back 👋
-        </Text>
+        <Text style={[styles.header, { color: color.text }]}>Create Account</Text>
 
+        <TextInput
+          value={username}
+          onChangeText={setUsername}
+          placeholder="Username"
+          placeholderTextColor={color.textSecondary}
+          style={[styles.input, { color: color.text, borderColor: color.textSecondary }]}
+        />
         <TextInput
           value={email}
           onChangeText={setEmail}
           placeholder="Email"
           placeholderTextColor={color.textSecondary}
+          keyboardType="email-address"
           style={[styles.input, { color: color.text, borderColor: color.textSecondary }]}
         />
         <TextInput
@@ -81,28 +89,18 @@ const Signin = () => {
           style={[styles.input, { color: color.text, borderColor: color.textSecondary }]}
         />
 
-        {loading ? (
-          <ActivityIndicator size="large" color={color.primary} />
-        ) : (
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: color.primary }]}
-            onPress={handleSignin}
-          >
-            <Text style={styles.buttonText}>Sign In</Text>
-          </TouchableOpacity>
-        )}
-
-        <Link href="/signup" style={styles.link}>
-          <Text style={{ color: color.primary }}>
-            Don't have an account? Sign Up
-          </Text>
-        </Link>
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: color.primary }]}
+          onPress={handleSignup}
+        >
+          <Text style={styles.buttonText}>Sign Up</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
 };
 
-export default Signin;
+export default Signup;
 
 const styles = StyleSheet.create({
   screen: {
@@ -143,9 +141,5 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "600",
     fontSize: 16,
-  },
-  link: {
-    marginTop: 20,
-    alignSelf: "center",
   },
 });

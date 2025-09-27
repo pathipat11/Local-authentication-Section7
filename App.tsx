@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, Button, StyleSheet } from "react-native";
-import { useBiometricAuth } from "./app/hooks/useBiometricAuth";
+import { useBiometricAuth } from "./hooks/useBiometricAuth";
 
 export default function App() {
   const [isLogin, setIsLogin] = useState(false);

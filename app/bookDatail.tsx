@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   Modal,
 } from "react-native";
-import { useTheme } from "../../../context/ThemeContext";
+import { useTheme } from "../context/ThemeContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
 import BookEdit from "./bookEdit";
