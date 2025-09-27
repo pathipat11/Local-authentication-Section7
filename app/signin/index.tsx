@@ -12,6 +12,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Link, useRouter } from "expo-router";
 import { useTheme } from "../../context/ThemeContext";
 import Constants from "expo-constants";
+import { useBiometricAuth } from "../../hooks/useBiometricAuth"; // 👈 import hook
 
 const Signin = () => {
   const { color } = useTheme();
@@ -21,6 +22,7 @@ const Signin = () => {
   const API_URL: string = Constants.expoConfig?.extra?.apiUrl || "";
 
   const router = useRouter();
+  const { isBiometricSupported, isEnrolled, authenticate } = useBiometricAuth(); // 👈 ใช้งาน hook
 
   const handleSignin = async () => {
     if (!email || !password) {
@@ -44,6 +46,16 @@ const Signin = () => {
       if (response.ok) {
         await AsyncStorage.setItem("authToken", result.token);
         await AsyncStorage.setItem("user", JSON.stringify(result.user));
+
+        // 👇 ตรวจสอบ biometric ก่อนเข้า main
+        if (isBiometricSupported && isEnrolled) {
+          const success = await authenticate();
+          if (!success) {
+            Alert.alert("Authentication Failed", "Biometric authentication failed.");
+            return; // ❌ ไม่ให้เข้า main ถ้า biometric fail
+          }
+        }
+
         console.log("Login successful");
         Alert.alert("Success", "Login successful!");
         router.replace("/main");
