@@ -100,6 +100,8 @@ const BookEdit: React.FC<BookEditProps> = ({ id, onClose, onUpdate }) => {
       });
 
       const result = await response.json();
+      console.log("Sending update:", bookData);
+      console.log("Response:", result)
 
       if (response.ok) {
         Alert.alert("Success", "Book updated successfully!");
