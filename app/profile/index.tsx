@@ -50,6 +50,7 @@ const Profile = () => {
 
       const data = await res.json();
       setUser(data.user);
+      setCreatedAt(new Date(data.user.createdAt).toLocaleString());
     } catch (err: any) {
       console.error(err);
     } finally {

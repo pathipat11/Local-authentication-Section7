@@ -48,7 +48,7 @@ const Book = () => {
             {data.map((book) => (
               <TouchableOpacity
                 key={book._id}
-                onPress={() => router.push(`./bookDetail?id=${book._id}`)}
+                onPress={() => router.push(`/bookDetail?id=${book._id}`)}
                 style={styles.gridItemWrapper}
               >
                 <View
